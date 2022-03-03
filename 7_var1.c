@@ -45,9 +45,7 @@ int main(int argc, char *argv[])
 	len = Traversal(argv[1]);
 	fileNameArr = (tFile*)realloc(fileNameArr, len * sizeof(tFile));
  
-//	for (int i = 0; i < len ; ++i)
-//		fprintf(f, "%s\n",fileNameArr[i]);
- 
+
 	if (argv[2][0] == '2')	
 		sortArr(fileNameArr, len, lessbyAlpha);
 	else
@@ -106,7 +104,7 @@ int Traversal(char *path)
 			if (dire->d_type != DT_DIR)
 			{				
 				struct stat fileBuf;
-				stat(dire->d_name, &fileBuf);
+				lstat(dire->d_name, &fileBuf);
 				if (includeArr(dire->d_name, path, fileBuf.st_size, fileNameArr, &len, &index))
 				{
 					perror("Error 1: Cannot include file in list");				

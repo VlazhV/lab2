@@ -4,7 +4,7 @@
 #include <dirent.h>
 #include <string.h>
 #include <stdlib.h>
- 
+#include <unistd.h>
  
 //   sudo tune2fs -O ^dir_index /dev/sdaXY
 
@@ -15,17 +15,17 @@ typedef struct _tFile_
 {
 	char *path;
 	char *name;
-	long int size;
+	off_t size;
 } tFile;
  
 tFile *fileNameArr;
  
-int includeArr(char *fileName, char *path, long int Fsize, tFile *fileNameArr, int *len, int *index);
+int includeArr(char *fileName, char *path, off_t Fsize, tFile *fileNameArr, int *len, int *index);
 int sortArr(tFile *fileNameArr, int len, int (*compare) (tFile fileA, tFile fileB));
 int lessbyAlpha(tFile fileA, tFile fileB);
 int lessbySize(tFile fileA, tFile fileB);
- 
- 
+//char *getAbsPath(char *RelPath);
+
 int Traversal(char *path);
  
 int copyFile(char *srcFile, char *destFile);
@@ -42,28 +42,31 @@ int main(int argc, char *argv[])
 
 	int len = 100;
 	fileNameArr = (tFile *)calloc(len, sizeof(tFile));
+//	char *AbsPath = getAbsPath(argv[1]);
+//	puts(AbsPath);
+//	len = Traversal(AbsPath);
 	len = Traversal(argv[1]);
 	fileNameArr = (tFile*)realloc(fileNameArr, len * sizeof(tFile));
- 
+
 
 	if (argv[2][0] == '2')	
 		sortArr(fileNameArr, len, lessbyAlpha);
 	else
-		sortArr(fileNameArr, len, lessbySize);		
- 	
- 	
+		sortArr(fileNameArr, len, lessbySize);
+
+
 	 	FILE *f;
 		if (!(f = fopen("7.txt", "w") ))
 		{
 			perror("error m2 : cannot open log file");
 			return 2;
 		}
-	 
+
 		for (int i = 0; i < len ; ++i)
 			fprintf(f, "%s\t%li\n",fileNameArr[i].name, fileNameArr[i].size);
 		fprintf(f, "========\ntotal = %d\n", len);
-		
-		
+
+
 		if (fclose(f))
 		{
 			perror("error m3: cannot close log file");
@@ -98,21 +101,22 @@ int Traversal(char *path)
  
 	while (dire = readdir(cur_dir))
 	{
-			
+
 		if (strcmp(dire->d_name,".") && strcmp(dire->d_name, ".."))
-		{		
+		{
 			if (dire->d_type != DT_DIR)
-			{				
+			{
 				struct stat fileBuf;
-				lstat(dire->d_name, &fileBuf);
+				if (lstat(dire->d_name, &fileBuf) < 0)
+					fprintf(stderr, "error 3 : fail at getting stats of %s/%s\n", path, dire->d_name);
 				if (includeArr(dire->d_name, path, fileBuf.st_size, fileNameArr, &len, &index))
 				{
-					perror("Error 1: Cannot include file in list");				
+					perror("Error 1: Cannot include file in list");
 					return -1;
 				}
 			}
 			else
-			{						
+			{
 				char *new_path = (char*)calloc(SIZE_BUF, sizeof(char));
 				strcpy(new_path, path);
 				strcat(new_path, "/");
@@ -130,7 +134,7 @@ int Traversal(char *path)
  
  
  
-int includeArr(char *fileName, char *path, long int Fsize, tFile *fileNameArr, int *len, int *index)
+int includeArr(char *fileName, char *path, off_t Fsize, tFile *fileNameArr, int *len, int *index)
 {
  
 	if ((*index) >= (*len))
@@ -265,7 +269,17 @@ int copyFile(char *srcFile, char *destFile)
 	chmod(destFile, fileStats.st_mode);
 	return 0;
 }
-
-
-
-
+/*
+char *getAbsPath(char *RelPath)
+{
+	if (RelPath[0] == '/')
+		return RelPath;
+	char *startAbsPath;
+	if (!(startAbsPath = (char *)calloc(SIZE_BUF, sizeof(char))))
+	{
+		perror("error gap1 : No memory");
+		return NULL;
+	}
+	return strcat(strcat(getwd(startAbsPath), "/"), RelPath);
+}
+*/

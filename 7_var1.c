@@ -39,7 +39,12 @@ int main(int argc, char *argv[])
 //	argv[3] - new dir
 {
  
-	FILE *f = fopen("7.txt", "w");
+	FILE *f;
+	if (!(f = fopen("7.txt", "w") ))
+	{
+		perror("error m2 : cannot open log file");
+		return 2;
+	}
  
 	int len = 100;
 	fileNameArr = (tFile *)calloc(len, sizeof(tFile));
@@ -56,6 +61,13 @@ int main(int argc, char *argv[])
  
 	for (int i = 0; i < len ; ++i)
 		fprintf(f, "%s\n",fileNameArr[i].name);
+	fprintf(f, "========/n, total = %d", len);
+	
+	if (fclose(f))
+	{
+		perror("error m3: cannot close log file");
+		return 3;
+	}
  
 	if (EPILOG(fileNameArr, len, argv[3]))
 	{
@@ -221,6 +233,7 @@ int copyFile(char *srcFile, char *destFile)
 	if (!(f_dest = fopen(destFile, "w")))
 	{
 		perror("error cf2 : cannot open dest file");
+		perror(destFile);		
 		return 1;
  	}
  	

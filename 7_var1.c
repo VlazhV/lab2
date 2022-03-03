@@ -225,7 +225,7 @@ int copyFile(char *srcFile, char *destFile)
  	}
  	
 	int c;
-	while (c = getc(f_src) != EOF)
+	while ( (c = getc(f_src)) != EOF)
 		if (putc(c, f_dest) == EOF)
 		{
 			perror("error cf3 : fail at copying");

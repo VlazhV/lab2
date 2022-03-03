@@ -39,13 +39,7 @@ int main(int argc, char *argv[])
 //	argv[3] - new dir
 {
  
-	FILE *f;
-	if (!(f = fopen("7.txt", "w") ))
-	{
-		perror("error m2 : cannot open log file");
-		return 2;
-	}
- 
+
 	int len = 100;
 	fileNameArr = (tFile *)calloc(len, sizeof(tFile));
 	len = Traversal(argv[1]);
@@ -58,16 +52,26 @@ int main(int argc, char *argv[])
 		sortArr(fileNameArr, len, lessbyAlpha);
 	else
 		sortArr(fileNameArr, len, lessbySize);		
+ 	
+ 	
+	 	FILE *f;
+		if (!(f = fopen("7.txt", "w") ))
+		{
+			perror("error m2 : cannot open log file");
+			return 2;
+		}
+	 
+		for (int i = 0; i < len ; ++i)
+			fprintf(f, "%s\t%li\n",fileNameArr[i].name, fileNameArr[i].size);
+		fprintf(f, "========\ntotal = %d\n", len);
+		
+		
+		if (fclose(f))
+		{
+			perror("error m3: cannot close log file");
+			return 3;
+		}
  
-	for (int i = 0; i < len ; ++i)
-		fprintf(f, "%s\n",fileNameArr[i].name);
-	fprintf(f, "========/n, total = %d", len);
-	
-	if (fclose(f))
-	{
-		perror("error m3: cannot close log file");
-		return 3;
-	}
  
 	if (EPILOG(fileNameArr, len, argv[3]))
 	{
@@ -94,12 +98,9 @@ int Traversal(char *path)
 	cur_dir = opendir(path);
 	struct dirent *dire;
  
-	do
+	while (dire = readdir(cur_dir))
 	{
-		if (!(dire = readdir(cur_dir)))					
-			return index;
- 
- 
+			
 		if (strcmp(dire->d_name,".") && strcmp(dire->d_name, ".."))
 		{		
 			if (dire->d_type != DT_DIR)
@@ -124,7 +125,8 @@ int Traversal(char *path)
 				}
 			}
 		}
-	}while (1);
+	}
+	return index;
 }
  
  

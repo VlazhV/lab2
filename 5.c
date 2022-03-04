@@ -4,15 +4,15 @@
 int main(int argc, char *argv[])
 {
 	FILE *destFile, *srcFile;
-	if (! (destFile = fopen (argv[1], "r") ))
+	if (! (srcFile = fopen (argv[1], "r") ))
 	{
-		perror("error 1:1 : Cannot open file");
+		perror("error 1:1 : Cannot open src file");
 		return 1;
 	}
 
-	if (! (srcFile = fopen(argv[2], "w") ))
+	if (! (destFile = fopen(argv[2], "w") ))
 	{
-		perror("error 1:2 : Cannot open file");
+		perror("error 1:2 : Cannot open dest file");
 		return 1;
 	}
 
@@ -35,7 +35,11 @@ int main(int argc, char *argv[])
 		perror("error 3 : Cannot get stats of file");
 		return 3;
 	}
-	chmod(argv[2], fileStat.st_mode);
+	if (chmod(argv[2], fileStat.st_mode))
+	{
+		perror("error 4 : Cannot apply mode changes to file");
+		return 4;
+	}
 
 	if (fclose(destFile))
 	{

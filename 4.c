@@ -29,12 +29,12 @@ int main(int argc, char *argv[])
 			{
 				if (c == '\n') 
 					i++;
-				else
-					if (EOF == putc(c, stdout))
-					{
-						perror("error 2: Cannot write char to Terminal");
-						return 2;
-					}
+			
+				if (EOF == putc(c, stdout))
+				{
+					perror("error 2: Cannot write char to Terminal");
+					return 2;
+				}
 			}
 			else
 			{

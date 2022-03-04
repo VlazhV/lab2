@@ -5,6 +5,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <errno.h>
  
 //   sudo tune2fs -O ^dir_index /dev/sdaXY
 
@@ -106,9 +107,28 @@ int Traversal(char *path)
 		{
 			if (dire->d_type != DT_DIR)
 			{
+				char *new_path = (char*)calloc(SIZE_BUF, sizeof(char));
+				strcpy(new_path, path);
+				strcat(strcat(new_path, "/"), dire->d_name);
 				struct stat fileBuf;
-				if (lstat(dire->d_name, &fileBuf) < 0)
+				if (lstat(new_path, &fileBuf) < 0)
+				{
 					fprintf(stderr, "error 3 : fail at getting stats of %s/%s\n", path, dire->d_name);
+					switch(errno)
+					{
+						case EACCES: perror("EACCES"); break;
+						case EBADF: perror("EBADF"); break;
+						case EFAULT: perror("EFAULT"); break;
+						case ELOOP: perror("ELOOP"); break;
+						case ENAMETOOLONG: perror("ENAMETOOLONG"); break;
+						case ENOENT: perror("ENOENT"); break;
+						case ENOMEM: perror("ENOMEM"); break;
+						case ENOTDIR: perror("ENOTDIR"); break;
+						case EOVERFLOW: perror("EOVERFLOW"); break;
+						case EINVAL: perror("EINVAL"); break;
+					}
+					
+				}
 				if (includeArr(dire->d_name, path, fileBuf.st_size, fileNameArr, &len, &index))
 				{
 					perror("Error 1: Cannot include file in list");

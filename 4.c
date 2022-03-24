@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
 		perror("N (number of chars to read) is out of range");
 		return -1;
 	}
-	if (endptr[0] == argv[2][0])
+	if (endptr == argv[2])
 	{
 		perror("invalid: N - number of chars to read");
 		return -1;

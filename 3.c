@@ -3,6 +3,11 @@
 #define END_MARK 6
 int main(int argc, char *argv[])
 {
+	if (argc != 2) 
+	{
+		perror("command file\n file - file to write from terminal in");
+		return -1;
+	}
 	FILE *f;
 	if (!(f = fopen(argv[1], "w") ))
 	{

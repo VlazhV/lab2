@@ -21,6 +21,11 @@ void formatOut(long long int size, const char *typeSize);
 
 int main(int argc, char *argv[])
 {
+	if (argc != 2)
+	{
+		perror("command dir");
+		return -1;
+	}
 	
 	char *absPath = (char*)calloc(PATH_MAX, 1);
 	if (!(absPath = getAbsPath(argv[1])))

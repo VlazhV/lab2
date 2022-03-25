@@ -6,7 +6,7 @@ int main(int argc, char *argv[])
 {
 	if (argc != 3)
 	{
-		perror("command file N\n file - file to read\n N - number of chars to read");
+		fprintf(stderr, "command file N\n file - file to read\n N - number of chars to read");
 		return -1;
 	}
 	char *endptr;
@@ -18,13 +18,13 @@ int main(int argc, char *argv[])
 	}
 	if (endptr == argv[2])
 	{
-		perror("invalid: N - number of chars to read");
+		fprintf(stderr, "invalid: N - number of chars to read");
 		return -1;
 	}
 	endptr = NULL;
 	if (N < 0)
 	{
-		perror("N < 0. If you wish to print all text input N = 0");
+		fprintf(stderr,"N < 0. If you wish to print all text input N = 0");
 		return -1;
 	}
 	

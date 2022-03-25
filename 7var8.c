@@ -23,7 +23,7 @@ int main(int argc, char *argv[])
 {
 	if (argc != 2)
 	{
-		perror("command dir");
+		fprintf(stderr, "command dir");
 		return -1;
 	}
 	
@@ -49,7 +49,7 @@ int main(int argc, char *argv[])
 	
 	
 	long long unsigned int disk = statFs.f_blocks * statFs.f_bsize;
-	printf("disk size = %f GB\n", (float)disk/(1<<30));
+	printf("disk size - %f GB\n", (float)disk/(1<<30));
 
 	printf("%f%%\n", (float)100*sizeDu.diskUse/disk);
 		

@@ -5,7 +5,7 @@ int main(int argc, char *argv[])
 {
 	if (argc != 3)
 	{
-		perror("command srcFile destFile");
+		fprintf(stderr, "command srcFile destFile");
 		return -1;
 	}
 	FILE *destFile, *srcFile;
